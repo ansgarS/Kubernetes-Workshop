@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kubernetes-workshop</artifactId>
+        <groupId>de.ansgarsachs</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.ansgar-sachs</groupId>
+    <artifactId>integration-tests</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.failsafe.plugin.version>3.0.0-M3</maven.failsafe.plugin.version>
+        <maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
+        <cucumber.version>4.7.4</cucumber.version>
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.1.2</maven.jar.plugin.version>
+
+        <generated.runner.directory>${project.build.directory}/parallel/runners</generated.runner.directory>
+        <generated.feature.directory>${project.build.directory}/parallel/features</generated.feature.directory>
+    </properties>
+
+    <dependencies>
+        <!-- START: CUCUMBER -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.14.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- END: CUCUMBER -->
+
+        <!-- START: REST CLIENT -->
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>3.1.02</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.25</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- END: REST CLIENT -->
+
+        <!-- START: DEPENDENCY INJECTION -->
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-guice</artifactId>
+            <version>1.2.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- END: DEPENDENCY INJECTION -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cucable-plugin</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>generate-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>parallel</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceRunnerTemplateFile>src/test/java/de/ansgarsachs/scenarios/CucableJavaTemplate.java</sourceRunnerTemplateFile>
+                    <!-- Test all: -->
+                    <sourceFeatures>src/test/resources/features</sourceFeatures>
+                    <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
+                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
+                    <parallelizationMode>features</parallelizationMode>
+                    <desiredNumberOfRunners>1</desiredNumberOfRunners>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${maven.build.helper.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${generated.runner.directory}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>Run parallel tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cluecumber-report-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <id>report</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>reporting</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
+                    <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,12 @@
+de/ansgarsachs/scenarios/steps/GetPatientsSteps.class
+de/ansgarsachs/scenarios/utils/Patient.class
+de/ansgarsachs/scenarios/utils/RestUtils.class
+de/ansgarsachs/scenarios/steps/GetPrescriptionsSteps.class
+de/ansgarsachs/scenarios/utils/Prescription.class
+de/ansgarsachs/scenarios/utils/DockerUtils.class
+de/ansgarsachs/scenarios/steps/World.class
+de/ansgarsachs/scenarios/CucableJavaTemplate.class
+de/ansgarsachs/scenarios/steps/AddPatientSteps.class
+de/ansgarsachs/scenarios/steps/ServiceSetupSteps.class
+de/ansgarsachs/scenarios/steps/AddPrescriptionSteps.class
+PatientRegistry_feature001_run001_IT.class
