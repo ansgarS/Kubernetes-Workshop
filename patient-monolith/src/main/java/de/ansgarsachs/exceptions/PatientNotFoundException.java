@@ -3,12 +3,11 @@ package de.ansgarsachs.exceptions;
 /**
  * PatientNotFoundException
  *
- * <p>
- * TODO: Write a description
- * </p>
- *
  * @author Ansgar Sachs &lt;ansgar.sachs@cgm.com&gt;
  * @since 23.02.20
  */
-public class PatientNotFoundException {
+public class PatientNotFoundException extends RuntimeException {
+    public PatientNotFoundException(String message) {
+        super(message);
+    }
 }
