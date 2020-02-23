@@ -1,17 +1,17 @@
 package de.ansgarsachs.patientmonolith.entity;
 
 /**
- * PatientId
+ * EntityId
  *
  * @author Ansgar Sachs &lt;ansgar.sachs@cgm.com&gt;
  * @since 23.02.20
  */
-public class PatientId {
+public class EntityId {
     private String id;
 
     public String toString() {
         return String.format(
-                "PatientId{id='%s'}",
+                "Id{id='%s'}",
                 id
         );
     }
