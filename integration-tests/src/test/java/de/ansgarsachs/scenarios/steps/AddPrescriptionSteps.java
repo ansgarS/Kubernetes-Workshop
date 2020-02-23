@@ -39,6 +39,16 @@ public class AddPrescriptionSteps {
     private Condition<Integer> statusCodeIs201 = new Condition<Integer>(code -> code == HttpStatus.SC_CREATED, "HttpStatus is 201");
     private Condition<Integer> statusCodeIs304 = new Condition<Integer>(code -> code == HttpStatus.SC_NOT_MODIFIED, "HttpStatus is 304");
 
+    private JSONObject createJSONObject(Prescription prescription) {
+        JSONObject pObject = new JSONObject();
+
+        pObject.put("name", prescription.getName());
+        pObject.put("patientId", prescription.getPatientId());
+        pObject.put("price", prescription.getPrice());
+
+        return pObject;
+    }
+
     @When("I add multiple prescriptions")
     public void addPrescriptions() throws MalformedURLException, URISyntaxException {
         Prescription prescription1 = new Prescription();
@@ -55,12 +65,12 @@ public class AddPrescriptionSteps {
 
         HttpResponse<JsonNode> res1 = Unirest.post(RestUtils.resolveUrlPath("createprescription", "prescriptions"))
                 .header("Content-Type", "application/json")
-                .body(new JSONObject(prescription1.toString()))
+                .body(createJSONObject(prescription1))
                 .asJson();
 
         HttpResponse<JsonNode> res2 = Unirest.post(RestUtils.resolveUrlPath("createprescription", "prescriptions"))
                 .header("Content-Type", "application/json")
-                .body(new JSONObject(prescription2.toString()))
+                .body(createJSONObject(prescription2))
                 .asJson();
 
         int status1 = res1.getStatus();

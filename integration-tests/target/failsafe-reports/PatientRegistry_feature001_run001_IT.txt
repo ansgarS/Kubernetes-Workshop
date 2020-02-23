@@ -1,7 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: PatientRegistry_feature001_run001_IT
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.884 s <<< FAILURE! - in PatientRegistry_feature001_run001_IT
-Create a patient and add prescriptions(Registration of Patients)  Time elapsed: 0.418 s  <<< ERROR!
-cucumber.runtime.CucumberException: org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1, localhost/0:0:0:0:0:0:0:1] failed: Connection refused (Connection refused)
-
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.115 s - in PatientRegistry_feature001_run001_IT

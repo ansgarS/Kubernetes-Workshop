@@ -41,9 +41,14 @@ public class AddPatientSteps {
         patient.setLastName("Sachs");
         patient.setAge(29);
 
+        JSONObject newPatient = new JSONObject();
+        newPatient.put("firstName", patient.getFirstName());
+        newPatient.put("lastName", patient.getLastName());
+        newPatient.put("age", patient.getAge());
+
         HttpResponse<JsonNode> res = Unirest.post(RestUtils.resolveUrlPath("createpatient", "patients"))
                 .header("Content-Type", "application/json")
-                .body(new JSONObject(patient.toString()))
+                .body(newPatient)
                 .asJson();
 
         int status = res.getStatus();
