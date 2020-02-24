@@ -14,7 +14,7 @@ public class Patient {
 
     public String toString() {
         return String.format(
-                "Patient{id='%s', firstName='%s', lastName='%s', age='%s'}",
+                "Patient{id='%s', firstName='%s', lastName='%s', age=%s}",
                 id,
                 firstName,
                 lastName,
