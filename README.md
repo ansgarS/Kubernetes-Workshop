@@ -58,7 +58,6 @@ POST /prescriptions {
 }
 Returns 201 Created { "id": "..." }
 
-
 GET /patients/<id>/costs
 
 Returns 200 OK { "patientId": "...", "costs": 45.27 }
