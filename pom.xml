@@ -11,6 +11,8 @@
     <modules>
         <module>patient-monolith</module>
         <module>integration-tests</module>
+        <module>patient-service</module>
+        <module>insurance-service</module>
     </modules>
 
 </project>
