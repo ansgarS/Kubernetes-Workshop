@@ -10,7 +10,7 @@
     </parent>
     <groupId>de.ansgarsachs</groupId>
     <artifactId>insurance-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>insurance-service</name>
     <description>Provides necessary data for an insurance</description>
 

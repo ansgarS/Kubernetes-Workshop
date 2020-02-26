@@ -10,7 +10,7 @@
     </parent>
     <groupId>de.ansgarsachs</groupId>
     <artifactId>patient-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>patient-service</name>
     <description>Manages patient related data</description>
 
