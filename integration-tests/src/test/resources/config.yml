@@ -12,13 +12,13 @@ containers:
     healthpath: actuator/health
 
   listcosts:
-    port: 8080
+    port: 8081
     host: localhost
     basepath: /
     healthpath: actuator/health
 
   listpatients:
-    port: 8080
+    port: 8081
     host: localhost
     basepath: /
     healthpath: actuator/health
