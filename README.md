@@ -33,7 +33,8 @@ create different entities for your read and write model.
 The task doesn't require any database access - instead you should
 persist everything in an in-memory store (hint: singleton).
 
-The directory `patient-monolith` is the only 
+The directory `patient-monolith` is the only place you need to touch 
+for this task.
 
 The following routes have to be served:
 
