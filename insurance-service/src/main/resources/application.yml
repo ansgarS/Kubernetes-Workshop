@@ -2,4 +2,12 @@ server:
   port: ${APP_PORT:8080}
 spring:
   application:
-    name: ${SPRING_APP_ID}
+    name: insurance-service
+  jpa:
+    database: postgresql
+    open-in-view: false
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://patient-database:5432/patientdb
+    username: cgmuser
+    password: cgmpassword
