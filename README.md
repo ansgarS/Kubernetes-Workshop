@@ -1,19 +1,41 @@
 # kubernetes-workshop
-An introduction into Kubernetes and Service Meshs
 
-## 0 Integration Tests
+An introduction into Kubernetes and Service Meshs.
 
-This module is already built. It proves that your artifacts are working.
+## 1 Branches
 
-Run it with:
-```bash
-cd integration-tests && mvn clean verify
-```
+The repository splits up into different branches depending on your current progress.
 
-## 1 patient-monolith
+| Task | Branch        | Description                                           |
+| ---- | ------------- | ----------------------------------------------------- |
+| 1    | master        | Initial skeleton project                              |
+| 1    | task1/final   | Implements a monolith to serve all requested routes   |
+| 2    | task2/starter | Initial split up into services                        |
+| 2    | task2/final   | Implements two services to serve all requested routes |
+| 3    | task3/starter | Initial kubernetes files                              |
+| 3    | task3/final   | Deploys all services to a k8s cluster                 |
 
-This application should be your start. 
-Add the following routes to get it working:
+## 2 Tasks
+
+### 2.1 Create a monolith
+
+Build a monolithic application that serves the following aspects:
+
+1) Create new patients
+2) Create new prescriptions
+3) List all patient ids
+4) Calculate the costs of prescriptions for a given patient
+
+You can use the integration tests for validating your artifacts.
+In order to continue with the next task more easily, you should 
+create different entities for your read and write model.
+
+The task doesn't require any database access - instead you should
+persist everything in an in-memory store (hint: singleton).
+
+The directory `patient-monolith` is the only 
+
+The following routes have to be served:
 
 ```
 POST /patients {
@@ -43,20 +65,111 @@ Returns 200 OK {
 }
 ```
 
-## 2 patient-app
+Note: Do not remove the dependency `spring-boot-starter-actuator`. 
+It is used for health checks during integration tests.
+
+Hint: How to create a rest controller
+
+```java
+@RestController
+@RequestMapping(value = "/myuri")
+public class SomeController {
+    // ....
+
+    @PostMapping(produces = {"application/json"})
+    public ResponseEntity<EntityId> createSth(@RequestBody MyEntity entity) {
+        try {
+            // ...
+
+            return new ResponseEntity<>(entityId, HttpStatus.CREATED);
+        } catch (SomeException e) {
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
+}
+```
+
+### 2.2 Split into services and containerize them
+
+Split the write and the read concern of your monolithic application into two services and 
+create docker containers that are composed inside docker-compose.
+
+Before your start, merge the branch `task2/starter` into your current branch. 
+As a result, you should see the following additional artifacts:
+1) insurance-service: Service that lists patientIds and calculates prescription costs
+2) patient-service: Service that creates patients and prescriptions
+3) docker-compose.yml: Composes a postgres database and both services 
+
+As a first step, you should create tables for your views and 
+additional materialized view which will fake eventual consistency.
+For this purpose have a look into [init.sql](./patient-db/init.sql)
+and add the following:
+
+1) Patient Table
+2) Prescription Table
+3) Dispenses Materialized View
+4) PatientIds Materialized View
+
+Hint: You need to add triggers which update the materialized view on
+table updates.
+
+In order to solve this task, you have to implement each Dockerfile of both services.
+It is important that each service is served on port `8080` - docker-compose will 
+remap them to avoid conflicts.
+
+If you have merged the starter branch, you don't have to worry about database access.
+Everything is already configured in the `application.yml`:
+
+```yaml
+ jpa:
+    database: postgresql
+    open-in-view: false
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://patient-database:5432/patientdb
+    username: cgmuser
+    password: cgmpassword
+```
+
+Hint 1: How to create an entity
+
+```java
+@Entity
+@Table(name = "my_entity", schema = "public")
+public class MyEntity {
+    @Id
+    @Column(name = "id")
+    private String id;
+
+    @Column(name = "column_name")
+    private String someProp;
+}
+```
+
+Hint 2: How to create a Repository
+
+```java
+@Repository
+public interface SomeRepo extends 
+    JpaRepository<MyEntity, String>, 
+    JpaSpecificationExecutor<MyEntity> 
+{ ... }
+```
  
-Create a new spring-boot-web project including the following dependencies:
-1. spring-boot-starter-web
-2. spring-boot-starter-actuator
-3. spring-boot-starter-data-jpa 
+### 2.3 Deploy services into k8s cluster  
 
-Refactor everything related to the creation of patient object's into this app.
+TODO
 
-## 3 insurance-app
+## 3 Integration Tests
 
-Create a new spring-boot-web project including the following dependencies:
-1. spring-boot-starter-web
-2. spring-boot-starter-actuator
-3. spring-boot-starter-data-jpa 
+This module is already built. It proves that your artifacts are working.
 
-Move any patient retrieval and cost calculation into this app.
+Run it with:
+```bash
+cd integration-tests && mvn clean verify
+```
+
+If you need to configure your tests (e.g. ports have changed), 
+then have a look into the following [file](./integration-tests/src/test/resources/config.yml).
+It lets you change the host, port, baseUrl and health uri. These are required to run 
+the integration tests successfully. 
