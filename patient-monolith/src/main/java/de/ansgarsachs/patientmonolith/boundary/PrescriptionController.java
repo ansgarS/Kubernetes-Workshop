@@ -25,7 +25,7 @@ public class PrescriptionController {
     private PatientRegistry repository;
 
     @PostMapping(produces = {"application/json"})
-    public ResponseEntity<EntityId> addPrescritpion(@RequestBody Prescription prescription) {
+    public ResponseEntity<EntityId> addPrescription(@RequestBody Prescription prescription) {
         try {
             String id = repository.addPrescription(prescription);
 
