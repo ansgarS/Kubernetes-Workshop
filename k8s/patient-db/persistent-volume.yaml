@@ -1,0 +1,6 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  # Add metadata
+spec:
+  # Add volume spec

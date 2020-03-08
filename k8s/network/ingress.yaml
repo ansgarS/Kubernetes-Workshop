@@ -1,0 +1,6 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  # Add metadata
+spec:
+  # Add ingress spec
