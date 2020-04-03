@@ -1,6 +1,13 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  # Add metadata
+  name: patient-db-pv-claim
+  labels:
+    app: patient-db
 spec:
-  # Add claim spec
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi

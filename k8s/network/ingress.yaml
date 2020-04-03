@@ -1,6 +1,18 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  # Add metadata
+  name: e-health-application-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  # Add ingress spec
+  rules:
+    - http:
+        paths:
+          - path: /insurance-svc
+            backend:
+              serviceName: cgm-insurance
+              servicePort: 8080
+          - path: /patient-svc
+            backend:
+              serviceName: cgm-patient
+              servicePort: 8080

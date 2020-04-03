@@ -1,6 +1,15 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  # Add metadata
+  name: patient-db-pv-volume
+  labels:
+    type: local
+    app: patient-db
 spec:
-  # Add volume spec
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data"
