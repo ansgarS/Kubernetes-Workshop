@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+# ##################################################
+# Bashfile for installing kubernetes locally
+#
+# @author Ansgar Sachs <ansgar.sachs@cgm.com>
+# @since  12.09.2019 08:33
+#
+version="1.0.0"
+#
+# HISTORY:
+#
+# * 12.09.2019 - v1.0.0  - Initial
+#
+# ##################################################
+
+installOnWindows() {
+    echo "Installing Kubernetes on Windows"
+
+    if ! [ -x "$(command -v curl)" ]; then
+        echo "Curl has to be installed"
+        exit 1
+    else
+        echo -e "1 \033[Downloading Kubectl\033[0m"
+        curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/windows/amd64/kubectl.exe
+
+        echo -e "2 \033[Please add the Kubectl to your PATH\033[0m"
+        echo -e "3 \033[When done, you can check the proper functioning by running:\033[0m"
+        echo -e "3 \033[kubectl version\033[0m"
+    fi
+}
+
+installOnMacOS() {
+    echo "Installing Kubernetes on MacOS"
+
+    echo -e "1 \033[1mUpdating Homebrew\033[0m"
+    brew update -q
+
+    echo -e "2 \033[1mInstalling kubernetes-cli\033[0m"
+    brew install kubernetes-cli
+
+    echo -e "3 \033[1mInstallation was successful, if you see a version:\033[0m"
+    kubectl version
+}
+
+installOnLinux() {
+    echo "Installing Kubernetes on Linux"
+
+    echo -e "1 \033[1mDownloading the Kubectl cli\033[0m"
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+    echo -e "2 \033[1mMake Kubectl executable\033[0m"
+    chmod +x ./kubectl
+
+    echo -e "3 \033[1mMoving Kubectl to your path\033[0m"
+    sudo mv ./kubectl /usr/local/bin/kubectl
+
+    echo -e "4 \033[1mInstallation was successful, if you see a version:\033[0m"
+    kubectl version
+}
+
+unknownOS() {
+    echo "Could not recognize underlying OS. Stopping installation"
+    exit 1
+}
+
+if ! [ -x "$(command -v kubectl)" ]; then
+    case "$OSTYPE" in
+        darwin*)  installOnMacOS ;;
+        linux*)   installOnLinux ;;
+        msys*)    installOnWindows ;;
+        *)        unknownOS ;;
+    esac
+else
+    echo "Kubectl is already installed"
+    echo "Stopping installation"
+    exit 1
+fi
+

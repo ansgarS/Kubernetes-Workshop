@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+# ##################################################
+# Bashfile for installing docker locally
+#
+# @author Ansgar Sachs <ansgar.sachs@cgm.com>
+# @since  12.09.2019 10:54
+#
+version="1.0.0"
+#
+# HISTORY:
+#
+# * 12.09.2019 - v1.0.0  - Initial
+#
+# ##################################################
+
+installOnMacOS() {
+  echo "Installing Docker on MacOS"
+
+  echo -e "1 \033[1mUpdating Homebrew\033[0m"
+  brew update -q
+
+  echo -e "2 \033[1mInstalling Docker\033[0m"
+  brew cask install docker
+
+  echo -e "3 \033[1mInstallation was successful, if you see a version:\033[0m"
+  docker version
+}
+
+installOnLinux() {
+  echo "Installing Docker on Linux"
+
+  echo -e "1 \033[Loading & Executing Installation Script\033[0m"
+  curl -fsSL https://get.docker.com | sh;
+
+  echo -e "2 \033[1mStarting the docker service\033[0m"
+  sudo service docker start
+
+  echo -e "3 \033[1mInstallation was successful, if you see a version:\033[0m"
+  docker version
+
+  echo "Installing Docker Compose on Linux"
+
+  echo "1 \033[Loading & Executing Installation Script\033[0m"
+  sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+  echo -e "2 \033[1mMake Compose Script executable\033[0m"
+  sudo chmod +x /usr/local/bin/docker-compose
+}
+
+installOnWindows() {
+  echo "Manual Installation for Docker on Windows is required."
+  echo "Please checkout: https://docs.docker.com/docker-for-windows/install/"
+  exit 1
+}
+
+unknownOS() {
+    echo "Could not recognize underlying OS. Stopping installation"
+    exit 1
+}
+
+if ! [ -x "$(command -v docker)" ]; then
+    case "$OSTYPE" in
+        darwin*)  installOnMacOS ;;
+        linux*)   installOnLinux ;;
+        msys*)    installOnWindows ;;
+        *)        unknownOS ;;
+    esac
+else
+    echo "Docker is already installed"
+    echo "Stopping installation"
+    exit 1
+fi

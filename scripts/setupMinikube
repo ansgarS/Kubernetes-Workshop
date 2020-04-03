@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+# ##################################################
+# Bashfile for installing Minikube locally
+#
+# @author Ansgar Sachs <ansgar.sachs@cgm.com>
+# @since  12.09.2019 11:03
+#
+version="1.0.0"
+#
+# HISTORY:
+#
+# * 03.04.2020 - v1.0.0  - Initial
+#
+# ##################################################
+
+installOnMacOS() {
+  echo "Installing Minikube on MacOS"
+
+  echo -e "1 \033[1mUpdating Homebrew\033[0m"
+  brew update -q
+
+  echo -e "2 \033[1mInstalling Minikube\033[0m"
+  brew cask install minikube
+
+  echo -e "3 \033[1mInstallation was successful, if you see a version:\033[0m"
+  minikube version
+}
+
+installOnLinux() {
+  echo "Installing Minikube on Linux"
+
+  echo -e "1 \033[Loading Minikube\033[0m"
+  curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+  echo -e "2 \033[1mMake Minikube executable\033[0m"
+  chmod +x minikube
+
+  echo -e "3 \033[1mMove Minikube into PATH\033[0m"
+  sudo install minikube /usr/local/bin
+}
+
+installOnWindows() {
+  echo "Manual Installation for Minikube on Windows is required."
+  echo "Please checkout: https://kubernetes.io/docs/tasks/tools/install-minikube/"
+  exit 1
+}
+
+unknownOS() {
+    echo "Could not recognize underlying OS. Stopping installation"
+    exit 1
+}
+
+if ! [ -x "$(command -v minikube)" ]; then
+    case "$OSTYPE" in
+        darwin*)  installOnMacOS ;;
+        linux*)   installOnLinux ;;
+        msys*)    installOnWindows ;;
+        *)        unknownOS ;;
+    esac
+else
+    echo "Minikube is already installed"
+    echo "Stopping installation"
+    exit 1
+fi
