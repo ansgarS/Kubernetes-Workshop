@@ -3,17 +3,17 @@ kind: Ingress
 metadata:
   name: e-health-application-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
     - host: insurance-app.info
       http:
         paths:
-          - path: /insurance-svc
+          - path: /insurance-svc(/|$)(.*)
             backend:
               serviceName: cgm-insurance
               servicePort: 8080
-          - path: /patient-svc
+          - path: /patient-svc(/|$)(.*)
             backend:
               serviceName: cgm-patient
               servicePort: 8080

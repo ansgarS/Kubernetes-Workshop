@@ -1,24 +1,24 @@
 containers:
   createpatient:
-    port: 8080
-    host: localhost
-    basepath: /
+    port: 80
+    host: insurance-app.info
+    basepath: /patient-svc/
     healthpath: actuator/health
 
   createprescription:
-    port: 8080
-    host: localhost
-    basepath: /
+    port: 80
+    host: insurance-app.info
+    basepath: /patient-svc/
     healthpath: actuator/health
 
   listcosts:
-    port: 8081
-    host: localhost
-    basepath: /
+    port: 80
+    host: insurance-app.info
+    basepath: /insurance-svc/
     healthpath: actuator/health
 
   listpatients:
-    port: 8081
-    host: localhost
-    basepath: /
+    port: 80
+    host: insurance-app.info
+    basepath: /insurance-svc/
     healthpath: actuator/health
