@@ -5,7 +5,6 @@ metadata:
   labels:
     app: patient-database
 spec:
-  storageClassName: standard
   accessModes:
     - ReadWriteMany
   resources:
