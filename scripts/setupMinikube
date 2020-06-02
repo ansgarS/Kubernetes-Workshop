@@ -25,6 +25,8 @@ installOnMacOS() {
 
   echo -e "3 \033[1mInstallation was successful, if you see a version:\033[0m"
   minikube version
+
+  echo -e "4 \033[1mCreate your minikube cluster with 'minikube start'\033[0m"
 }
 
 installOnLinux() {
@@ -38,6 +40,11 @@ installOnLinux() {
 
   echo -e "3 \033[1mMove Minikube into PATH\033[0m"
   sudo install minikube /usr/local/bin
+
+  echo -e "4 \033[1mInstallation was successful, if you see a version:\033[0m"
+  minikube version
+
+  echo -e "5 \033[1mCreate your minikube cluster with 'minikube start'\033[0m"
 }
 
 installOnWindows() {
@@ -61,5 +68,7 @@ if ! [ -x "$(command -v minikube)" ]; then
 else
     echo "Minikube is already installed"
     echo "Stopping installation"
+
+    echo -e "\033[1mCreate your minikube cluster with 'minikube start'\033[0m"
     exit 1
 fi
