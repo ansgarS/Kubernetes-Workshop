@@ -1,11 +1,11 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: patient-db-pv-claim
+  name: patient-database-pv-claim
   labels:
-    app: patient-db
+    app: patient-database
 spec:
-  storageClassName: manual
+  storageClassName: local-storage
   accessModes:
     - ReadWriteMany
   resources:

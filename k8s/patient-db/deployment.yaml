@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: patient-db
+  name: patient-database
   namespace: default
   labels:
-    app: patient-db
+    app: patient-database
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: patient-db
+      app: patient-database
   template:
     metadata:
       labels:
-        app: patient-db
+        app: patient-database
     spec:
       containers:
         - name: postgres
@@ -25,22 +25,22 @@ spec:
             - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
-                  name: patient-db-secret
+                  name: patient-database-secret
                   key: dbname
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: patient-db-secret
+                  name: patient-database-secret
                   key: username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: patient-db-secret
+                  name: patient-database-secret
                   key: password
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: patient-db
+              name: patient-database
       volumes:
-        - name: patient-db
+        - name: patient-database
           persistentVolumeClaim:
-            claimName: patient-db-pv-claim
+            claimName: patient-database-pv-claim

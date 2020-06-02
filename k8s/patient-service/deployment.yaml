@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: cgm-patient
-          imagePullPolicy: IfNotPresent
-          image: cgm_tutorials/patient-service:1.0.0
+          imagePullPolicy: Never
+          image: patient-service:1.0.0
           ports:
             - containerPort: 8080
               name: insurance-http
@@ -26,15 +26,15 @@ spec:
             - name: PATIENT_DB_NAME
               valueFrom:
                 secretKeyRef:
-                  name: patient-db-secret
+                  name: patient-database-secret
                   key: dbname
             - name: PATIENT_DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: patient-db-secret
+                  name: patient-database-secret
                   key: username
             - name: PATIENT_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: patient-db-secret
+                  name: patient-database-secret
                   key: password
