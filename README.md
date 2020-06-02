@@ -158,18 +158,158 @@ public interface SomeRepo extends
  
 ### 2.3 Deploy services into k8s cluster  
 
-TODO
+Now it is time for Kubernetes 😎. Get ready by executing the following scripts:
+```bash
+./scripts/setupKubernetes
+./scripts/setupMinikube
+```
+After the installation was successful, you have to create your minikube cluster by running the following command:
+```bash
+minikube start
+```
+By default, not all required features, that we need for our workshop, are enabled. To change this, run the following:
+```
+minikube addons enable default-storageclass
+minikube addons enable ingress
+```
+
+Since we are working a local environment and don't want to rely on an external docker registry, 
+you have need to access the minikube's docker environment. This is done by running:
+```bash
+eval $(minikube docker-env)
+``` 
+You will notice new docker containers, if you run ``docker ps`` and probably recognize that your docker 
+from task 2 are gone. Change this by building them again:
+```
+cd patient-service && docker build -t patient-service:1.0.0
+cd insurance-service && docker build -t insurance-service:1.0.0
+```
+
+Before you start with the task, merge the branch ``task3/starter`` into your current one. 
+It will add a new directory ``k8s``, which you will use to create your kubernetes files.
+
+The task is as simple as that:
+1) Complete all the stubbed k8s files and deploy them
+2) Your ingress has to be reachable on `kubernetes-workshop.info`
+3) Services should be of type cluster ip
+4) Sensitive configurations like passwords should live inside a secret
+5) All files that already exist as stubs have to be used and no additional ones should be created
+6) Verify your result by running the integration tests
+
+**Hint 1: Hostname**
+
+In order to get access to this hostname, you have to update your hosts file as follows:
+```
+# Get your cluster ip:
+minikube ip
+
+# Add this to your hosts file (/etc/hosts)
+<the ip> kubernetes-workshop.info
+```
+
+**Hint 2: path resolution**
+
+You will face the issue, that subpath are not automatically resolved by your ingress controller.
+To solve this issue, you have to use the redirect feature of ingress like in the following example:
+```
+# Ingress.yaml
+...
+    annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+
+...
+    - path: /some-path-to-service(/|$)(.*)
+...
+```
+This will append any subpath to your service call.
+
+**Hint 3: Secrets**
+The value of a secret have to be encoded in base64. The following commands will en- and decode values:
+```bash
+# Encode in Base64
+echo -n 'username' | base64
+# Decode from Base64
+echo -n 'dXNlcm5hbWU=' | base64 --decode
+```
+
+**Hint 4: DNS resolution**
+Just like in docker-compose, you can access different nodes in the cluster by using the 
+service label. Consequently, the following use case demonstrated how to access a database:
+
+```
+# DBService.yaml
+....
+    selector:
+        ports:
+          - port: 5432
+        app: patient-database
+...
+
+URL to access inside the cluster: patient-database:5432
+```
+
+**Hint 5: Configmap**
+Inside the k8s/patient-db directory, you will find a Configmap. This is used to initialize your
+postgresql database. Use the secret for database name, username and password.
+
+
+The following commands will support you during development:
+```bash
+# Get all deployments
+kubectl get deployments
+# Inspect a given deployment
+kubectl describe deployment <deployment-name>
+
+# Get all pods
+kubectl get pods
+# Inspect a given pod
+kubectl describe pod <pod-name>
+# View logs of pod
+kubectl logs -f <pod-name>
+
+# Get all persistent volume claims
+kubectl get pvc
+# Inspect a given persistent volume claim
+kubectl describe <pvc-name>
+
+# Get all ingress
+kubectl get ingress
+# Inspect an ingress
+kubectl describe ingress <ingress-name>
+
+# Get all Services
+kubectl get services
+# Inspect a given service
+kubectl describe service <service-name>
+
+# Get all secrets
+kubectl get secrets
+# Inspect a secret
+kubectl describe secret <secret-name>
+# 
+
+# Apply all k8s files of a given directory
+kubectl apply -f <dir-name>
+
+# Remove all k8s files from minikube located in a host dir
+kubectl delete -f <dir-name>
+```
 
 ## 3 Integration Tests
 
-This module is already built. It proves that your artifacts are working.
+This module is already implemented and doesn't require additional changes. 
+In short, it proves that your artifacts are working.
 
 Run it with:
 ```bash
 cd integration-tests && mvn clean verify
 ```
 
-If you need to configure your tests (e.g. ports have changed), 
+If you need to configure your tests (e.g. ports have changed or routes), 
 then have a look into the following [file](./integration-tests/src/test/resources/config.yml).
 It lets you change the host, port, baseUrl and health uri. These are required to run 
 the integration tests successfully. 
+
+## 4 Feedback
+
+Feel free to leave feedback in a Github Issue. 
