@@ -1,6 +1,6 @@
 # kubernetes-workshop
 
-An introduction into Kubernetes and Service Meshs.
+An introduction into Kubernetes for Beginners - slides will be uploaded soon.
 
 ## 1 Branches
 
@@ -132,7 +132,7 @@ Everything is already configured in the `application.yml`:
     password: cgmpassword
 ```
 
-Hint 1: How to create an entity
+**Hint 1: Entities** How to create an entity
 
 ```java
 @Entity
@@ -147,7 +147,7 @@ public class MyEntity {
 }
 ```
 
-Hint 2: How to create a Repository
+**Hint 2: Repositories** How to create a Repository
 
 ```java
 @Repository
@@ -174,19 +174,19 @@ minikube addons enable default-storageclass
 minikube addons enable ingress
 ```
 
-Since we are working a local environment and don't want to rely on an external docker registry, 
+Since we are working in a local environment and don't want to rely on an external docker registry, 
 you have need to access the minikube's docker environment. This is done by running:
 ```bash
 eval $(minikube docker-env)
 ``` 
 You will notice new docker containers, if you run ``docker ps`` and probably recognize that your docker 
-from task 2 are gone. Change this by building them again:
+containers from task 2 are gone. Change this by building them again:
 ```
 cd patient-service && docker build -t patient-service:1.0.0
 cd insurance-service && docker build -t insurance-service:1.0.0
 ```
 
-Before you start with the task, merge the branch ``task3/starter`` into your current one. 
+Before you start with the upcoming task, merge the branch ``task3/starter`` into your current one. 
 It will add a new directory ``k8s``, which you will use to create your kubernetes files.
 
 The task is as simple as that:
@@ -197,9 +197,7 @@ The task is as simple as that:
 5) All files that already exist as stubs have to be used and no additional ones should be created
 6) Verify your result by running the integration tests
 
-**Hint 1: Hostname**
-
-In order to get access to this hostname, you have to update your hosts file as follows:
+**Hint 1: Hostname** In order to get access to this hostname, you have to update your hosts file as follows:
 ```
 # Get your cluster ip:
 minikube ip
@@ -208,10 +206,8 @@ minikube ip
 <the ip> kubernetes-workshop.info
 ```
 
-**Hint 2: path resolution**
-
-You will face the issue, that subpath are not automatically resolved by your ingress controller.
-To solve this issue, you have to use the redirect feature of ingress like in the following example:
+**Hint 2: path resolution** You will face the issue, that subpaths are not automatically resolved by your ingress controller.
+To solve this issue, you have to use the redirect feature of ingress-nginx like in the following example:
 ```
 # Ingress.yaml
 ...
@@ -224,8 +220,7 @@ To solve this issue, you have to use the redirect feature of ingress like in the
 ```
 This will append any subpath to your service call.
 
-**Hint 3: Secrets**
-The value of a secret have to be encoded in base64. The following commands will en- and decode values:
+**Hint 3: Secrets** The value of a secret have to be encoded in base64. The following commands will en- and decode values:
 ```bash
 # Encode in Base64
 echo -n 'username' | base64
@@ -233,8 +228,7 @@ echo -n 'username' | base64
 echo -n 'dXNlcm5hbWU=' | base64 --decode
 ```
 
-**Hint 4: DNS resolution**
-Just like in docker-compose, you can access different nodes in the cluster by using the 
+**Hint 4: DNS resolution** Just like in docker-compose, you can access different nodes in the cluster by using the 
 service label. Consequently, the following use case demonstrated how to access a database:
 
 ```
@@ -314,3 +308,10 @@ the integration tests successfully.
 ## 4 Feedback
 
 Feel free to leave feedback in a Github Issue. 
+
+## 5 Upcoming
+
+1) Service Mesh
+2) Monitoring
+3) Get it into a cloud
+4) Kubernetes Package Manager
