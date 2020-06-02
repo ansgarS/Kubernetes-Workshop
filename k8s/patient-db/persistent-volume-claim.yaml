@@ -5,7 +5,7 @@ metadata:
   labels:
     app: patient-database
 spec:
-  storageClassName: local-storage
+  storageClassName: standard
   accessModes:
     - ReadWriteMany
   resources:

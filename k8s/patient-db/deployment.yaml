@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:10.4
+          image: postgres:12
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
@@ -40,7 +40,13 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: patient-database
+            - mountPath: docker-entrypoint-initdb.d
+              name: initdb
+              readOnly: true
       volumes:
         - name: patient-database
           persistentVolumeClaim:
             claimName: patient-database-pv-claim
+        - name: initdb
+          configMap:
+            name: patient-database-initdb

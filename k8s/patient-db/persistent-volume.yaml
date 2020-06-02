@@ -6,10 +6,10 @@ metadata:
     type: local
     app: patient-database
 spec:
-  storageClassName: local-storage
+  storageClassName: standard
   capacity:
     storage: 5Gi
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/data"
+    path: "/Users/ansgarsachs/CGM/kubernetes-workshop/db-data"
