@@ -290,6 +290,160 @@ kubectl apply -f <dir-name>
 kubectl delete -f <dir-name>
 ```
 
+### 2.3.1 Ingress
+
+Use an ingress controller to route traffic from outside towards one of your services.
+An ingress definition file looks as follows:
+```yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+      # $2 takes everything behind the first path  
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+  # some more metadata
+spec:
+  rules:
+    - host: your-domain.com
+      http:
+        paths:
+          # The wildcard fowards any additional sub paths to the service
+          - path: /example-route(/|$)(.*)
+            backend:
+              serviceName: example-service
+              servicePort: 1234
+          # More routes
+```
+
+Check the official [docs](https://kubernetes.io/docs/concepts/services-networking/ingress/) for more information.
+
+### 2.3.2 Services
+
+A service takes requests from inside the cluster and from an ingress controller
+and dispatches it into a given replicaset that is using this service. For this 
+purpose the following service file is required:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: some-service-name
+  namespace: default
+  # some additional metadata
+spec:
+  ports:
+    - port: 1234
+      protocol: TCP
+  selector:
+    app: some-selector
+```
+
+The selector is necessary for connecting deployments to this service and to access it; It allows 
+to route requests to this label. Check the official [docs](https://kubernetes.io/docs/concepts/services-networking/service/) for more information.
+
+### 2.3.3 Deployment
+
+A deployment creates a set of pods with some additional features that might be of interest in
+later iterations of this workshop. For this workshop the following aspects are relevant:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: some-deployment-name
+  namespace: default
+  # some more metadata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: some-selector
+  template:
+    metadata:
+      labels:
+        app: some-selector
+    spec:
+      volumes:
+        - name: some-configmap-volume
+          configMap:
+            name: some-configmap-name
+        - name: some-volume
+          persistentVolumeClaim:
+            claimName: some-claim-name
+      containers:
+        - name: some-container-name
+          imagePullPolicy: IfNotPresent
+          image: insurance-service:1.0.0 # the docker image name
+          ports:
+            - containerPort: 8080
+              name: insurance-http
+          env:
+            - name: SOME_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: some-secret-name
+                  key: some-key-name
+          volumeMounts:
+            - mountPath: /path/in/container
+              name: name-of-volume
+```
+ 
+Check the official [docs](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) for more information.
+
+### 2.3.4 Configmap
+
+A configmap can store files and configurations that have to be mounted into a given container:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: default
+  name: some-configmap-name
+data:
+  some.sql: |
+    SOME SQL STATEMENT;
+```
+
+Check the official [docs](https://kubernetes.io/docs/concepts/configuration/configmap/) for more information.
+
+### 2.3.5 Secrets
+
+A secret can store sensitive data which is mounted into the container just like a configmap.
+Its values are encoded in base64 and one usually uses a tool to manage them (KMS). It's 
+structure looks similar to a configmap:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: some-secret-name
+type: Opaque
+data:
+  someKey: cGF0aWVudGRi
+``` 
+
+Check the official [docs](https://kubernetes.io/docs/concepts/configuration/secret/) for more information.
+
+### 2.3.6 Persistent Volume Claim
+
+A PersistentVolumeClaim (PVC) is a request for storage by a user. Its structure looks as follows:
+
+```yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: some-pvc-name
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+``` 
+
+Check the official [docs](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) for more information.
+
 ## 3 Integration Tests
 
 This module is already implemented and doesn't require additional changes. 
