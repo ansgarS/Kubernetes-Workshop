@@ -1,6 +1,6 @@
 # kubernetes-workshop
 
-An introduction into Kubernetes for Beginners - slides will be uploaded soon.
+An introduction into Kubernetes for Beginners - slides can be found [here](./Ansgar%20Sachs%20-%20Kubernetes%20Workshop.pdf).
 
 ## 1 Branches
 
