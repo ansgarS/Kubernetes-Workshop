@@ -2,6 +2,8 @@
 
 An introduction into Kubernetes for Beginners - slides can be found [here](./Ansgar%20Sachs%20-%20Kubernetes%20Workshop.pdf).
 
+![K8S Workshop Intro Slide](./k8s_intro_slide.png)
+
 ## 1 Branches
 
 The repository splits up into different branches depending on your current progress.
