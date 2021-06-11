@@ -2,4 +2,4 @@ server:
   port: ${APP_PORT:8080}
 spring:
   application:
-    name: ${SPRING_APP_ID:patient-monolith}
+    name: ${SPRING_APP_ID:spring-monolith}
