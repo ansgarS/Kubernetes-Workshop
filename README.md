@@ -50,7 +50,7 @@ POST /patients {
 }
 Returns 201 Created { "id":  "..." }
 
-POST /perscriptions {
+POST /prescriptions {
   "patientId": "...",
   "name": "...",
   "dose": "...",
@@ -122,7 +122,7 @@ and add the following:
 Hint: You need to add triggers which update the materialized view on
 table updates. Materialized views are used for this task to separate 
 the READ database from the WRITE database. Such a view can be 
-implemented as follows are read the documentation [here](https://www.postgresql.org/docs/current/rules-materializedviews.html):
+implemented as follows (or read the documentation [here](https://www.postgresql.org/docs/current/rules-materializedviews.html)):
 
 ```sql
 --  patient-db/init.sql
