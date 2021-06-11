@@ -30,7 +30,9 @@ Build a monolithic application that serves the following aspects:
 
 You can use the integration tests for validating your artifacts.
 In order to continue with the next task more easily, you should 
-create different entities for your read and write model.
+create different entities for your read and write model. Please
+keep in mind that the entity IDs are generated on the server and 
+are returned wrapped in an object - not only a simple string.
 
 The task doesn't require any database access - instead you should
 persist everything in an in-memory store (hint: singleton).
@@ -49,6 +51,7 @@ POST /patients {
 Returns 201 Created { "id":  "..." }
 
 POST /perscriptions {
+  "patientId": "...",
   "name": "...",
   "dose": "...",
   "price": 12.12
@@ -103,7 +106,10 @@ As a result, you should see the following additional artifacts:
 2) patient-service: Service that creates patients and prescriptions
 3) docker-compose.yml: Composes a postgres database and both services 
 
-As a first step, you should create tables for your views and 
+This time you have to take care of the business logic in both services - the patient-monolith 
+is not relevant anymore. In addition, you have to think about Dockerfiles that serve your spring
+application - don't make it a rocket science and use the internet for inspiration.
+However, as a first step, you should create tables for your views and 
 additional materialized view which will fake eventual consistency.
 For this purpose have a look into [init.sql](./patient-db/init.sql)
 and add the following:
@@ -114,7 +120,41 @@ and add the following:
 4) PatientIds Materialized View
 
 Hint: You need to add triggers which update the materialized view on
-table updates.
+table updates. Materialized views are used for this task to separate 
+the READ database from the WRITE database. Such a view can be 
+implemented as follows are read the documentation [here](https://www.postgresql.org/docs/current/rules-materializedviews.html):
+
+```sql
+--  patient-db/init.sql
+CREATE TABLE test_entity (
+      id          varchar(255) PRIMARY KEY,
+      first_name  varchar(255) NOT NULL
+);
+
+CREATE MATERIALIZED VIEW IF NOT EXISTS test_ids AS
+-- Here you need to aggregate with a smart select query.
+-- You can use aggregation functions like sum() and 
+-- GROUP BY another table column
+SELECT
+    id
+FROM test_entity;
+
+CREATE UNIQUE INDEX IF NOT EXISTS test_id_idx ON test_ids (id);
+
+CREATE OR REPLACE FUNCTION refresh_test_ids()
+    RETURNS TRIGGER LANGUAGE plpgsql
+AS $$
+BEGIN
+    REFRESH MATERIALIZED VIEW CONCURRENTLY test_ids;
+    RETURN NULL;
+END $$;
+
+CREATE TRIGGER on_test_change
+    AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+    ON test_entity
+    FOR EACH STATEMENT
+EXECUTE PROCEDURE refresh_test_ids();
+```
 
 In order to solve this task, you have to implement each Dockerfile of both services.
 It is important that each service is served on port `8080` - docker-compose will 
@@ -168,10 +208,10 @@ Now it is time for Kubernetes 😎. Get ready by executing the following scripts
 ```
 After the installation was successful, you have to create your minikube cluster by running the following command:
 ```bash
-minikube start
+minikube start --driver=virtualbox
 ```
 By default, not all required features, that we need for our workshop, are enabled. To change this, run the following:
-```
+```bash
 minikube addons enable default-storageclass
 minikube addons enable ingress
 ```
@@ -183,7 +223,7 @@ eval $(minikube docker-env)
 ``` 
 You will notice new docker containers, if you run ``docker ps`` and probably recognize that your docker 
 containers from task 2 are gone. Change this by building them again:
-```
+```bash
 cd patient-service && docker build -t patient-service:1.0.0
 cd insurance-service && docker build -t insurance-service:1.0.0
 ```
